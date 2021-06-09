@@ -30,7 +30,7 @@ from libqtile import bar, layout, widget
 from libqtile.config import Click, Drag, Group, Key, Match, Screen
 from libqtile.lazy import lazy
 from libqtile.utils import guess_terminal
-import os 
+import os
 
 mod = "mod4"
 terminal = guess_terminal()
@@ -81,7 +81,6 @@ keys = [
     Key([mod, "control"], "q", lazy.shutdown(), desc="Shutdown Qtile"),
     Key([mod], "r", lazy.spawncmd(),
         desc="Spawn a command using a prompt widget"),
-    Key([mod], "Return", lazy.spawn("lxterminal")),
      #Volumen
     Key([], "XF86AudioLowerVolume", lazy.spawn("pamixer --decrease 5")),
     Key([], "XF86AudioRaiseVolume", lazy.spawn("pamixer --increase 5")),
@@ -93,8 +92,8 @@ keys = [
     Key([mod], "m", lazy.spawn("rofi -show run")),
     Key([mod, 'shift'], "m", lazy.spawn("rofi -show")),
     Key([mod], "c", lazy.spawn("code")),
-    Key([mod], "e", lazy.spawn("thunar")),
-    Key([mod], "n", lazy.spawn("chromium")),
+    Key([mod], "e", lazy.spawn("nautilus")),
+    Key([mod], "n", lazy.spawn("google-chrome")),
     Key([mod], "h", lazy.spawncmd("htop")),
     Key([mod], "i", lazy.spawn("insomnia")),
     Key([mod], "l", lazy.spawn("libreoffice")),
@@ -103,25 +102,26 @@ keys = [
     Key([mod], "p", lazy.spawn("postman")),
     Key([mod], "t", lazy.spawn("telegram-desktop")),
     Key([mod], "b", lazy.spawn("virtualbox")),
+    Key([mod, 'control'], "c", lazy.spawn("gnome-control-center")),
     Key([mod], "k", lazy.spawn("kazam"))
 ]
 
-groups = [Group(i) for i in "1234"]
 
-for i in groups:
-    keys.extend([
-        # mod1 + letter of group = switch to group
-        Key([mod], i.name, lazy.group[i.name].toscreen(),
-            desc="Switch to group {}".format(i.name)),
+# GRUPO DE ENTORNO DE TRABAJO
+group_names = [("", {'layout': 'columns'}),
+               ("", {'layout': 'columns'}),
+               ("", {'layout': 'columns'}),
+               ("", {'layout': 'columns'}),
+               ("", {'layout': 'columns'}),
+               ("瑩", {'layout': 'columns'}),
+               ("漣", {'layout': 'columns'})]
 
-        # mod1 + shift + letter of group = switch to & move focused window to group
-        Key([mod, "shift"], i.name, lazy.window.togroup(i.name, switch_group=True),
-            desc="Switch to & move focused window to group {}".format(i.name)),
-        # Or, use below if you prefer not to switch to that group.
-        # # mod1 + shift + letter of group = move focused window to group
-        # Key([mod, "shift"], i.name, lazy.window.togroup(i.name),
-        #     desc="move focused window to group {}".format(i.name)),
-    ])
+groups = [Group(name, **kwargs) for name, kwargs in group_names]
+
+for i, (name, kwargs) in enumerate(group_names, 1):
+    keys.append(Key([mod], str(i), lazy.group[name].toscreen()))        # Switch to another group
+    keys.append(Key([mod, "shift"], str(i), lazy.window.togroup(name))) # Send current window to another group
+
 
 layouts = [
     layout.Columns(border_focus_stack='#d75f5f'),
@@ -133,16 +133,16 @@ layouts = [
     layout.MonadTall(),
     layout.MonadWide(),
     # layout.RatioTile(),
-    # layout.Tile(),
+    layout.Tile(),
     # layout.TreeTab(),
     # layout.VerticalTile(),
     # layout.Zoomy(),
 ]
 
 widget_defaults = dict(
-    font='sans',
-    fontsize=12,
-    padding=3,
+    font='3270Narrow Nerd Font',
+    fontsize=18,
+    padding=6,
 )
 extension_defaults = widget_defaults.copy()
 
@@ -162,7 +162,7 @@ screens = [
                 widget.Systray(),
                 widget.Clock(format='%Y-%m-%d %a %I:%M %p'),
                 widget.CurrentLayout(),
-                widget.QuickExit(),
+                widget.QuickExit(default_text="  "),
             ],
             30,
             background="#272729",
@@ -254,7 +254,7 @@ focus_on_window_activation = "smart"
 wmname = "LG3D"
 
 
+autostart = ['feh --bg-scale /home/aelohacking/Imágenes/wallpaper.jpeg']
 
-
-#for x in autostart:
-#    os.system(x)
+for x in autostart:
+    os.system(x)
